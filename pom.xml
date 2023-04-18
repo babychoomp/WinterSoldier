@@ -69,6 +69,13 @@
 		    <artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/nz.net.ultraq.thymeleaf/thymeleaf-layout-dialect -->
+		<!-- Java에서 Thymeleaf 템플릿 엔진을 사용할 때 여러 기능을 제공하는 라이브러리 -->
+	    <dependency>
+	        <groupId>nz.net.ultraq.thymeleaf</groupId>
+	        <artifactId>thymeleaf-layout-dialect</artifactId>
+	    </dependency>
+		
 	</dependencies>
 
 	<build>
