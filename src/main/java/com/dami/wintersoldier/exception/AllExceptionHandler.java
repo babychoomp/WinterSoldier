@@ -2,10 +2,13 @@ package com.dami.wintersoldier.exception;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.dami.wintersoldier.util.CommonUtils;
 
 import groovy.util.logging.Slf4j;
 
@@ -26,20 +29,26 @@ public class AllExceptionHandler {
 			Exception ex = exception.getException();
 			StackTraceElement [] steArr = ex.getStackTrace();
 			for(StackTraceElement ste : steArr) {
-				System.out.println(ste.toString());
-			}
-			
+				System.out.println(ste.toString()); // 예외가 발생하면 해당 예외의 스택 추적 정보를 출력합니다.
 		}
 		
+	}
 		
-		// reponse 담기
-		ErrorResponse errRes = ErrorResponse.builder()
-				.result(exception.getCode().getResult())
-				.resultDesc(exception.getCode().getResultDesc())
-				.resDate(CommonUtils.currentTime())
-				.reqNo(exception.getReqNo())
-				.httpStatus(exception.getHttpStatus())
-				.build();
+		
+	// response 담기
+	// ErrorResponse 객체를 생성하고 초기화합니다. 이를 통해 응답 정보를 담는데 사용합니다.
+	ErrorResponse errRes = ErrorResponse.builder()
+			.result(exception.getCode().getResult())
+			.resultDesc(exception.getCode().getResultDesc())
+			.resDate(CommonUtils.currentTime())
+			.reqNo(exception.getReqNo())
+			.httpStatus(exception.getHttpStatus())
+			.build();
+	
+	return new ResponseEntity<ErrorResponse>(errRes, errRes.getHttpStatus());
 		
 	}
+	
+	
+	
 }
