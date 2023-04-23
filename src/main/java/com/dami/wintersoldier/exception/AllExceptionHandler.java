@@ -7,6 +7,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.HttpServerErrorException.InternalServerError;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.dami.wintersoldier.util.CommonUtils;
 
@@ -31,9 +33,7 @@ public class AllExceptionHandler {
 			for(StackTraceElement ste : steArr) {
 				System.out.println(ste.toString()); // 예외가 발생하면 해당 예외의 스택 추적 정보를 출력합니다.
 		}
-		
 	}
-		
 		
 	// response 담기
 	// ErrorResponse 객체를 생성하고 초기화합니다. 이를 통해 응답 정보를 담는데 사용합니다.
@@ -50,5 +50,29 @@ public class AllExceptionHandler {
 	}
 	
 	
+	
+	// DB error
+	@ExceptionHandler(InternalServerError.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public HttpEntity<ErrorResponse> handelerInternalServerError(InternalException exception) {
+		System.out.println("=========Internal Error=========" + exception.getMessage());
+		ErrorResponse errRes = ErrorResponse.builder()
+				.result(exception.getCode().getResult())
+				.resultDesc(exception.getCode().getResultDesc())
+				.resDate(CommonUtils.currentTime())
+				.reqNo(CommonUtils.currentTime())
+				.build();
+		return new ResponseEntity<ErrorResponse>(errRes, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	// error page
+	@ExceptionHandler(Exception.class)
+	public ModelAndView commonException(Exception e) {
+		e.getStackTrace();
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("exception", e.getStackTrace());
+		mv.setViewName("commons/commonErr.html");
+		return mv;
+	}
 	
 }
