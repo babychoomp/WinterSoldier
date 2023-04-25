@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
                         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dami.wintersoldiermapper.UserMapper">
+<mapper namespace="com.dami.wintersoldier.mapper.UserMapper">
 
     <!-- selectId -->
-	<select id="mbSelectList" resultType="com.dami.wintersoldierdomain.LoginDomain" parameterType="hashMap">
+	<select id="mbSelectList" resultType="com.dami.wintersoldier.domain.LoginDomain" parameterType="hashMap">
 	    SELECT * FROM wsdb.member WHERE mb_seq=#{mbSeq}
 	</select>
 	
     <!-- selectAll -->
-	<select id="mbAllList" resultType="com.dami.wintersoldierdomain.LoginDomain" parameterType="map">
+	<select id="mbAllList" resultType="com.dami.wintersoldier.domain.LoginDomain" parameterType="map">
 	    SELECT * FROM wsdb.member order by mb_update_at desc limit #{offset}, #{contentnum}
 	</select>
 	
 	<!-- create -->
-	<insert id="mbCreate" parameterType="com.dami.wintersoldierdomain.LoginDomain" >
-	   INSERT INTO .member(mb_id, mb_pw, mb_level, mb_ip, mb_use, mb_create_at, mb_update_at)  
+	<insert id="mbCreate" parameterType="com.dami.wintersoldier.domain.LoginDomain" >
+	   INSERT INTO wsdb.member(mb_id, mb_pw, mb_level, mb_ip, mb_use, mb_create_at, mb_update_at)  
 	   VALUES (#{mbId}, #{mbPw}, #{mbLevel}, #{mbIp}, #{mbUse}, now(), now())
 	</insert>
 	
@@ -30,12 +30,12 @@
 	</select>
 
 	<!-- mbGetId -->	
-	<select id="mbGetId" resultType="com.dami.wintersoldierdomain.LoginDomain" parameterType="hashMap">
+	<select id="mbGetId" resultType="com.dami.wintersoldier.domain.LoginDomain" parameterType="hashMap">
 	   SELECT * FROM wsdb.member WHERE mb_id=#{mbId}
 	</select>
 	
 	<!-- update -->
-	<update id="mbUpdate" parameterType="com.dami.wintersoldierdomain.LoginDomain">
+	<update id="mbUpdate" parameterType="com.dami.wintersoldier.domain.LoginDomain">
 		UPDATE wsdb.member SET
 		        mb_pw=#{mbPw},
 		        mb_level=#{mbLevel},

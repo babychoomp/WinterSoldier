@@ -12,7 +12,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 @Configuration
 @MapperScan(
-	basePackages = {"com.co.kr.mapper"}, // 이부분은 각자 패키지구조로 
+	basePackages = {"com.dami.wintersoldier.mapper"}, // 이부분은 각자 패키지구조로 
 	annotationClass = org.apache.ibatis.annotations.Mapper.class,
 	sqlSessionFactoryRef = "sqlSessionFactory")
 public class MybatisConfig {
