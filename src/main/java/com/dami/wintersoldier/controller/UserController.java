@@ -47,7 +47,7 @@ public class UserController {
 		HttpSession session = request.getSession();
 		ModelAndView mav = new ModelAndView();
 		// 중복체크
-		Map<String, String> map = new HashMap<>();
+		Map<String, String> map = new HashMap();
 		map.put("mbId", loginDTO.getId());
 		map.put("mbPw", loginDTO.getPw());
 		
@@ -90,7 +90,9 @@ public class UserController {
 		mav.addObject("items", items);
 		mav.setViewName("board/boardList.html");
 		return mav; 
-	}
+	};
+	
+	
 	
 	//대시보드 리스트 보여주기
 	@GetMapping("mbList")
@@ -99,11 +101,19 @@ public class UserController {
 		ModelAndView mav = new ModelAndView();
 		HttpSession session = request.getSession();
 		
+		//session저장 page 가져오기
 		String page = (String) session.getAttribute("page"); // session에 담고 있는 page 꺼냄
-		if(page == null)page = "1"; // 없으면 1
+		//request param 저장 page 가져오기
+		String paramPage = request.getParameter("page");
 		
-		//클릭페이지 세션에 담아줌
-		session.setAttribute("page", page);
+		
+		if(paramPage != null) { //param 있으면
+			session.setAttribute("page", paramPage);
+		}else if(page != null) { //session 있으면
+			session.setAttribute("page", page);
+		}else {
+			session.setAttribute("page", "1");
+		}
 		
 		//페이지네이션
 		mav = mbListCall(request);  //리스트만 가져오기
@@ -157,10 +167,9 @@ public class UserController {
 	};
 	
 	
-	
 	//수정페이지 이동
 	@GetMapping("/modify/{mbSeq}")
-    public ModelAndView mbModify(@RequestParam("mbSeq") String mbSeq, UserController re) throws IOException {
+    public ModelAndView mbModify(@PathVariable("mbSeq") String mbSeq, RedirectAttributes re) throws IOException {
 		ModelAndView mav = new ModelAndView();
 		re.addAttribute("mbSeq", mbSeq);
 		mav.setViewName("redirect:/mbEditList");
@@ -174,10 +183,11 @@ public class UserController {
 		
 		ModelAndView mav = new ModelAndView();
 		// 해당리스트 가져옴
-		mav = mbListCall(request);  
+		mav = mbListCall(request);  //리스트만 가져오기
 		Map map = new HashMap<String, String>();
 		map.put("mbSeq", mbSeq);
 		LoginDomain loginDomain = userService.mbSelectList(map);
+		System.out.println("loginDomain"+loginDomain.getMbLevel());
 		mav.addObject("item",loginDomain);
 		mav.setViewName("admin/adminEditList.html");
 		return mav; 
@@ -215,17 +225,15 @@ public class UserController {
 	};
 	
 	
-	
 	//삭제
 	@GetMapping("/remove/{mbSeq}")
-	  public ModelAndView mbRemove(@PathVariable("mbSeq") String mbSeq, RedirectAttributes re, HttpServletRequest request) throws IOException {
+    public ModelAndView mbRemove(@PathVariable("mbSeq") String mbSeq, RedirectAttributes re, HttpServletRequest request) throws IOException {
 		ModelAndView mav = new ModelAndView();
 		
 		//db 삭제
 		Map map = new HashMap<String, String>();
 		map.put("mbSeq", mbSeq);
 		userService.mbRemove(map);
-
 		//page 초기화
 		HttpSession session = request.getSession();
 				
@@ -234,8 +242,6 @@ public class UserController {
 		mav.setViewName("redirect:/mbList");
 		return mav;
 	};
-	
-	
 	
 	
 	// 어드민의 멤버추가 & 회원가입
@@ -274,6 +280,24 @@ public class UserController {
 			//현재아이피 추출
 			String IP = CommonUtils.getClientIP(request);
 			
+//			//자동생성 
+//			for (int i = 1; i < 32; i++) {
+//				
+//				LoginDomain loginDomain = null; //초기화
+//				loginDomain = LoginDomain.builder()
+//						.mbId(loginVO.getId()+i)
+//						.mbPw(loginVO.getId())
+//						.mbLevel("2")
+//						.mbIp(IP)
+//						.mbUse("Y")
+//						.build();
+//				
+//				// 저장
+//				userService.mbCreate(loginDomain);
+//			}
+//			mav.setViewName("redirect:/mbList?page=1");
+			
+			
 			//전체 갯수
 			int totalcount = userService.mbGetAll();
 			
@@ -281,12 +305,12 @@ public class UserController {
 			LoginDomain loginDomain = LoginDomain.builder()
 					.mbId(loginVO.getId())
 					.mbPw(loginVO.getPw())
-					.mbLevel((totalcount == 0) ? "3" : "2") // 최초가입자를 level 3 admin 부여
+					.mbLevel((totalcount == 0) ? "3" : "2")  // 최초가입자를 level 3 admin 부여
 					.mbIp(IP)
 					.mbUse("Y")
 					.build();
-			
-       // 저장
+		
+			// 저장
 			userService.mbCreate(loginDomain);
 			
 			if(loginVO.getAdmin() == null) { // 'admin'들어있을때는 alert 스킵이다
@@ -303,13 +327,8 @@ public class UserController {
 		return mav;
 
 	};
-	
-	
-	
-	
-	
-	
-	
+		
+		
 	// 회원가입 화면
 	@GetMapping("signin")
     public ModelAndView signIn() throws IOException {
@@ -327,5 +346,4 @@ public class UserController {
 		mav.setViewName("index.html");
 		return mav;
 	}
-	
 }
