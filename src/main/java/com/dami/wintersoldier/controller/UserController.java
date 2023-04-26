@@ -11,7 +11,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -35,7 +34,7 @@ public class UserController {
 	@Autowired
 	private UploadService uploadService;
 
-	@GetMapping("board")
+	@RequestMapping(value = "board")
 	public ModelAndView login(LoginVO loginDTO, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 		//session 처리 
@@ -77,7 +76,7 @@ public class UserController {
 
 
   // 좌측 메뉴 클릭시 보드화면 이동 (로그인된 상태)
-	@GetMapping("bdList")
+	@RequestMapping(value = "bdList")
 	public ModelAndView bdList() { 
 		ModelAndView mav = new ModelAndView();
 		List<BoardListDomain> items = uploadService.boardList();
